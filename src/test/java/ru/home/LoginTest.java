@@ -120,16 +120,15 @@ public class LoginTest {
 
         String message = driver.switchTo().alert().getText();
         Assert.assertTrue(message.contains("Неверные данные для авторизации"));
-    }
+    }  // Тест не проходит, поле не учитывает регистр букв у логина
 
     @Test
-    void loginUpperCasePasswordTest() {
+    void loginLowerCasePasswordTest() {
         loginPage = new LoginPage(driver);
-        String newPassword = login.toUpperCase();
+        String newPassword = password.toLowerCase();
         loginPage.inputLogin(login);
         loginPage.inputPasswd(newPassword);
         loginPage.clickSubmit();
-
         String message = driver.switchTo().alert().getText();
         Assert.assertTrue(message.contains("Неверные данные для авторизации"));
     }
@@ -143,5 +142,16 @@ public class LoginTest {
 
         String message = driver.switchTo().alert().getText();
         Assert.assertTrue(message.contains("Неверные данные для авторизации"));
-    }
+    }  // Тест не проходит, поле не учитывает пробелы в начале и в конце логина
+
+    @Test
+    void loginPasswordWithSpacesTest() {
+        loginPage = new LoginPage(driver);
+        loginPage.inputLogin(login);
+        loginPage.inputPasswd("    " + password + "    ");
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
+    }  // Тест не проходит, поле не учитывает пробелы в начале и в конце пароля
 }
