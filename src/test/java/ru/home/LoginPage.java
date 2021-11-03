@@ -29,6 +29,7 @@ public class LoginPage {
     public void inputPasswd(String password) {
         passwordField.sendKeys(password);
     }
+
     public void clickSubmit() {
         submit.click();
     }

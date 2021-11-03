@@ -1,7 +1,6 @@
 package ru.home;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
-import java.util.concurrent.TimeUnit;
 import org.junit.Assert;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
@@ -39,6 +38,7 @@ public class LoginTest {
     void tearDown() {
         driver.quit();
     }
+
     @AfterAll
     static void tearDownComplete() {
         if (driver != null)
@@ -48,7 +48,7 @@ public class LoginTest {
     }
 
     @Test
-    void test_url_start() {
+    void urlTest() {
         String title = driver.getTitle();
         Assert.assertEquals(title, "Авторизация");
     }
@@ -67,7 +67,7 @@ public class LoginTest {
     }
 
     @Test
-    void loginTestWithoutWait() {
+    void loginWithoutWaitTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin(login);
         loginPage.inputPasswd(password);
@@ -75,5 +75,73 @@ public class LoginTest {
 
         String title = driver.getTitle();
         Assert.assertEquals(title, "Mirapolis LMS");
+    }
+
+    @Test
+    void loginNullDataTest() {
+        loginPage = new LoginPage(driver);
+        loginPage.inputLogin("");
+        loginPage.inputPasswd("");
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
+    }
+
+    @Test
+    void loginInvalidLoginTest() {
+        loginPage = new LoginPage(driver);
+        loginPage.inputLogin("default_login");
+        loginPage.inputPasswd(password);
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
+    }
+
+    @Test
+    void loginInvalidPasswordTest() {
+        loginPage = new LoginPage(driver);
+        loginPage.inputLogin(login);
+        loginPage.inputPasswd("default_password");
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
+    }
+
+    @Test
+    void loginUpperCaseLoginTest() {
+        loginPage = new LoginPage(driver);
+        String newLogin = login.toUpperCase();
+        loginPage.inputLogin(newLogin);
+        loginPage.inputPasswd(password);
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
+    }
+
+    @Test
+    void loginUpperCasePasswordTest() {
+        loginPage = new LoginPage(driver);
+        String newPassword = login.toUpperCase();
+        loginPage.inputLogin(login);
+        loginPage.inputPasswd(newPassword);
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
+    }
+
+    @Test
+    void loginLoginWithSpacesTest() {
+        loginPage = new LoginPage(driver);
+        loginPage.inputLogin("    " + login + "    ");
+        loginPage.inputPasswd(password);
+        loginPage.clickSubmit();
+
+        String message = driver.switchTo().alert().getText();
+        Assert.assertTrue(message.contains("Неверные данные для авторизации"));
     }
 }
