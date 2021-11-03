@@ -26,7 +26,7 @@ public class LoginPage {
         loginField.sendKeys(login);
     }
 
-    public void inputPasswd(String password) {
+    public void inputPassword(String password) {
         passwordField.sendKeys(password);
     }
 

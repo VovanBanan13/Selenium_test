@@ -57,20 +57,20 @@ public class LoginTest {
     void loginTest() throws InterruptedException {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin(login);
-        loginPage.inputPasswd(password);
+        loginPage.inputPassword(password);
         loginPage.clickSubmit();
         WebElement wait = (new WebDriverWait(driver, 10))
                 .until(ExpectedConditions.presenceOfElementLocated(By.className("avatar-full-name")));
 
         String title = driver.getTitle();
-        Assert.assertEquals(title, "Главная страница");
+        Assert.assertTrue(title.contains("Главная страница"));
     }
 
     @Test
     void loginWithoutWaitTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin(login);
-        loginPage.inputPasswd(password);
+        loginPage.inputPassword(password);
         loginPage.clickSubmit();
 
         String title = driver.getTitle();
@@ -81,7 +81,7 @@ public class LoginTest {
     void loginNullDataTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin("");
-        loginPage.inputPasswd("");
+        loginPage.inputPassword("");
         loginPage.clickSubmit();
 
         String message = driver.switchTo().alert().getText();
@@ -92,7 +92,7 @@ public class LoginTest {
     void loginInvalidLoginTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin("default_login");
-        loginPage.inputPasswd(password);
+        loginPage.inputPassword(password);
         loginPage.clickSubmit();
 
         String message = driver.switchTo().alert().getText();
@@ -103,7 +103,7 @@ public class LoginTest {
     void loginInvalidPasswordTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin(login);
-        loginPage.inputPasswd("default_password");
+        loginPage.inputPassword("default_password");
         loginPage.clickSubmit();
 
         String message = driver.switchTo().alert().getText();
@@ -111,11 +111,23 @@ public class LoginTest {
     }
 
     @Test
-    void loginUpperCaseLoginTest() {
+    void loginChangeCaseLoginTest() {
         loginPage = new LoginPage(driver);
+        loginPage.inputPassword(password);
         String newLogin = login.toUpperCase();
+        if (newLogin.equals(login))
+        {
+            newLogin = login.toLowerCase();
+            if (newLogin.equals(login))
+            {
+                loginPage.inputLogin(newLogin);
+                loginPage.clickSubmit();
+                String title = driver.getTitle();
+                Assert.assertEquals(title, "Mirapolis LMS");
+                return;
+            }
+        }
         loginPage.inputLogin(newLogin);
-        loginPage.inputPasswd(password);
         loginPage.clickSubmit();
 
         String message = driver.switchTo().alert().getText();
@@ -123,11 +135,23 @@ public class LoginTest {
     }  // Тест не проходит, поле не учитывает регистр букв у логина
 
     @Test
-    void loginLowerCasePasswordTest() {
+    void loginChangeCasePasswordTest() {
         loginPage = new LoginPage(driver);
-        String newPassword = password.toLowerCase();
         loginPage.inputLogin(login);
-        loginPage.inputPasswd(newPassword);
+        String newPassword = password.toUpperCase();
+        if (newPassword.equals(password))
+        {
+            newPassword = password.toLowerCase();
+            if (newPassword.equals(password))
+            {
+                loginPage.inputPassword(newPassword);
+                loginPage.clickSubmit();
+                String title = driver.getTitle();
+                Assert.assertEquals(title, "Mirapolis LMS");
+                return;
+            }
+        }
+        loginPage.inputPassword(newPassword);
         loginPage.clickSubmit();
         String message = driver.switchTo().alert().getText();
         Assert.assertTrue(message.contains("Неверные данные для авторизации"));
@@ -137,7 +161,7 @@ public class LoginTest {
     void loginLoginWithSpacesTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin("    " + login + "    ");
-        loginPage.inputPasswd(password);
+        loginPage.inputPassword(password);
         loginPage.clickSubmit();
 
         String message = driver.switchTo().alert().getText();
@@ -148,7 +172,7 @@ public class LoginTest {
     void loginPasswordWithSpacesTest() {
         loginPage = new LoginPage(driver);
         loginPage.inputLogin(login);
-        loginPage.inputPasswd("    " + password + "    ");
+        loginPage.inputPassword("    " + password + "    ");
         loginPage.clickSubmit();
 
         String message = driver.switchTo().alert().getText();
